@@ -25,8 +25,8 @@ public class OsdrController {
         try {
             List<StudyFileDto> filteredFiles = osdrService.fetchFilteredFiles(
                     params.getStudyIds(),
+                    params.getPage(),      // ✅ Ahora se pasa el parámetro page
                     params.getSize(),
-                    params.getCursorDateCreated(),  // <-- cursor-based pagination
                     params.isAllFiles()
             );
 

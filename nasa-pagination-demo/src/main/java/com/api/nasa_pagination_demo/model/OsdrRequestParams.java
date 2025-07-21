@@ -1,43 +1,27 @@
 package com.api.nasa_pagination_demo.model;
 
 /**
- * Represents the input parameters for querying NASA's OSDR file endpoint.
- * Supports pagination, visibility, and cursor-based filtering for study-specific file data.
- *
- * Fields include:
- * - studyIds: Identifies which NASA studies to query
- * - page: Specifies the page number for paginated results
- * - size: Limits the number of results per page
- * - allFiles: Toggles visibility for hidden or non-public files
- * - cursorDateCreated: Filters files created after this timestamp (for cursor-based pagination)
- *
- * Defaults are provided for sensible fallbacks, and setters include basic validation.
+ * Parámetros para consultar archivos de estudios NASA.
+ * Incluye:
+ * - studyIds: IDs de estudios (ej. 137,87-95,153.2)
+ * - page: número de página (empieza desde 0)
+ * - size: cantidad de resultados por página (máximo 25 según OSDR API)
+ * - allFiles: incluir o no archivos ocultos
  */
 public class OsdrRequestParams {
 
-    // Comma- or dash-separated study identifiers (e.g., "87-95", "137,153.2")
     private String studyIds = "137";
-
-    // Page number for pagination (default: 1)
-    private int page = 1;
-
-    // Number of results per page (default: 20; valid range: 1–100)
-    private int size = 20;
-
-    // Whether to include hidden or non-public files (default: false)
+    private int page = 0; // ✅ Página empieza en 0 según la documentación oficial
+    private int size = 20; // 🔧 Asegúrate que el servicio respete el máximo de 25
     private boolean allFiles = false;
-
-    // Cursor-based pagination: timestamp in seconds with decimals (e.g. 1686100768.452)
-    private Double cursorDateCreated;
 
     public OsdrRequestParams() {}
 
-    public OsdrRequestParams(String studyIds, int page, int size, boolean allFiles, Double cursorDateCreated) {
+    public OsdrRequestParams(String studyIds, int page, int size, boolean allFiles) {
         this.studyIds = studyIds;
-        this.page = Math.max(page, 0);
-        this.size = (size > 0 && size <= 100) ? size : 20;
+        this.page = Math.max(page, 0); // mínimo 0
+        this.size = (size > 0 && size <= 25) ? size : 20; // OSDR recomienda máximo 25
         this.allFiles = allFiles;
-        this.cursorDateCreated = cursorDateCreated;
     }
 
     public String getStudyIds() {
@@ -61,7 +45,7 @@ public class OsdrRequestParams {
     }
 
     public void setSize(int size) {
-        this.size = (size > 0 && size <= 100) ? size : 20;
+        this.size = (size > 0 && size <= 25) ? size : 20;
     }
 
     public boolean isAllFiles() {
@@ -70,13 +54,5 @@ public class OsdrRequestParams {
 
     public void setAllFiles(boolean allFiles) {
         this.allFiles = allFiles;
-    }
-
-    public Double getCursorDateCreated() {
-        return cursorDateCreated;
-    }
-
-    public void setCursorDateCreated(Double cursorDateCreated) {
-        this.cursorDateCreated = cursorDateCreated;
     }
 }
